@@ -2,7 +2,7 @@
 import { useAppContext } from "../context/AppContext.jsx";
 
 function FavoritesPage() {
-  const { state } = useAppContext();
+  const { state, removeFavorite } = useAppContext();
   const { user, favorites } = state;
 
   if (!user) {
@@ -28,8 +28,14 @@ function FavoritesPage() {
       <h1>Your Favorite Movies</h1>
       <ul>
         {favorites.map((fav) => (
-          <li key={fav._id || fav.tmdbId}>
-            {fav.title} {fav.rating ? `- Rating: ${fav.rating}` : ""}
+          <li key={fav._id}>
+            {fav.title}
+            <button
+              style={{ marginLeft: "0.5rem" }}
+              onClick={() => removeFavorite(fav._id)}
+            >
+              Remove
+            </button>
           </li>
         ))}
       </ul>

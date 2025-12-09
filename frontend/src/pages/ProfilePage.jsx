@@ -3,14 +3,13 @@ import { useAppContext } from "../context/AppContext.jsx";
 
 function ProfilePage() {
   const { state } = useAppContext();
-  const user = state.user;
+  const { user, favorites } = state;
 
   if (!user) {
     return (
       <div>
         <h1>Your Profile</h1>
-        <p>You are not logged in.</p>
-        <p>Please click the "Login" button in the top-right corner.</p>
+        <p>You need to log in with Google to see your profile.</p>
       </div>
     );
   }
@@ -18,13 +17,37 @@ function ProfilePage() {
   return (
     <div>
       <h1>Your Profile</h1>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          marginBottom: "1rem",
+        }}
+      >
+        {user.picture && (
+          <img
+            src={user.picture}
+            alt={user.name}
+            style={{
+              width: "64px",
+              height: "64px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        )}
+        <div>
+          <h2 style={{ margin: 0 }}>{user.name}</h2>
+          <p style={{ margin: 0, color: "#555" }}>{user.email}</p>
+        </div>
+      </div>
+
       <p>
-        <strong>Name:</strong> {user.name}
+        You currently have <strong>{favorites.length}</strong> favorite
+        movie{favorites.length === 1 ? "" : "s"}.
       </p>
-      <p>
-        <strong>Email:</strong> {user.email}
-      </p>
-      <p>User ID: {user.id}</p>
     </div>
   );
 }

@@ -1,11 +1,22 @@
 // src/context/AppContext.jsx
-import { createContext, useContext, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useCallback,
+} from "react";
+import {
+  fetchFavorites,
+  createFavorite,
+  updateFavoriteById,
+  deleteFavoriteById,
+} from "../api/backend.js";
 
 const AppContext = createContext();
 
 const initialState = {
-  user: null,      // بعداً با Google Auth پر می‌کنیم
-  favorites: [],   // بعداً از backend می‌آد
+  user: null, // later will come from Google Auth
+  favorites: [],
 };
 
 function appReducer(state, action) {
@@ -53,7 +64,6 @@ function appReducer(state, action) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // این‌ها رو فعلاً ساده نگه می‌داریم، بعداً auth واقعی و API وصل می‌کنیم
   const login = (user) => {
     dispatch({ type: "LOGIN", payload: user });
   };
@@ -62,20 +72,47 @@ export function AppProvider({ children }) {
     dispatch({ type: "LOGOUT" });
   };
 
-  const setFavorites = (favorites) => {
-    dispatch({ type: "SET_FAVORITES", payload: favorites });
+  // load favorites from backend for given userId
+  const loadFavoritesForUser = useCallback(async (userId) => {
+    try {
+      const favorites = await fetchFavorites(userId);
+      dispatch({ type: "SET_FAVORITES", payload: favorites });
+    } catch (error) {
+      console.error("Error loading favorites:", error);
+    }
+  }, []);
+
+  const addFavorite = async ({ userId, tmdbId, title, posterPath }) => {
+    try {
+      const favorite = await createFavorite({
+        userId,
+        tmdbId,
+        title,
+        posterPath,
+      });
+      dispatch({ type: "ADD_FAVORITE", payload: favorite });
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+      throw error;
+    }
   };
 
-  const addFavorite = (favorite) => {
-    dispatch({ type: "ADD_FAVORITE", payload: favorite });
+  const updateFavorite = async (id, { note, rating }) => {
+    try {
+      const favorite = await updateFavoriteById(id, { note, rating });
+      dispatch({ type: "UPDATE_FAVORITE", payload: favorite });
+    } catch (error) {
+      console.error("Error updating favorite:", error);
+    }
   };
 
-  const updateFavorite = (favorite) => {
-    dispatch({ type: "UPDATE_FAVORITE", payload: favorite });
-  };
-
-  const removeFavorite = (favoriteId) => {
-    dispatch({ type: "REMOVE_FAVORITE", payload: favoriteId });
+  const removeFavorite = async (id) => {
+    try {
+      await deleteFavoriteById(id);
+      dispatch({ type: "REMOVE_FAVORITE", payload: id });
+    } catch (error) {
+      console.error("Error deleting favorite:", error);
+    }
   };
 
   return (
@@ -84,7 +121,7 @@ export function AppProvider({ children }) {
         state,
         login,
         logout,
-        setFavorites,
+        loadFavoritesForUser,
         addFavorite,
         updateFavorite,
         removeFavorite,

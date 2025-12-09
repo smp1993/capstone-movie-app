@@ -6,23 +6,45 @@ import FavoritesPage from "./pages/FavoritesPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { useAppContext } from "./context/AppContext.jsx";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 function App() {
-  const { state, login, logout } = useAppContext();
-
-  const handleFakeLogin = () => {
-    // فعلاً یک یوزر تستی؛ بعداً این رو با Google Auth عوض می‌کنیم
-    login({
-      id: "demo-user-id",
-      name: "Demo User",
-      email: "demo@example.com",
-    });
-  };
+  const { state, login, logout, loadFavoritesForUser } = useAppContext();
 
   const isLoggedIn = Boolean(state.user);
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      if (!credential) {
+        console.error("No credential returned from Google");
+        return;
+      }
+
+      const decoded = jwtDecode(credential);
+      // decoded معمولاً شامل sub, name, email, picture و ... است
+      const user = {
+        id: decoded.sub,
+        name: decoded.name,
+        email: decoded.email,
+        picture: decoded.picture,
+      };
+
+      login(user);
+      await loadFavoritesForUser(user.id);
+    } catch (error) {
+      console.error("Error decoding Google credential:", error);
+    }
+  };
+
+  const handleGoogleError = () => {
+    console.error("Google Login failed");
+    alert("Google login failed. Please try again.");
+  };
+
   return (
-    <div>
+    <div className="page">
       {/* Navigation bar */}
       <nav
         style={{
@@ -51,12 +73,15 @@ function App() {
               <button onClick={logout}>Logout</button>
             </>
           ) : (
-            <button onClick={handleFakeLogin}>Login</button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
           )}
         </div>
       </nav>
 
-      {/* Routeها */}
+      {/* Routes */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/discover" element={<DiscoverPage />} />

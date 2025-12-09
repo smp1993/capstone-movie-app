@@ -1,6 +1,8 @@
 // src/pages/DiscoverPage.jsx
 import useSWR from "swr";
 import { fetchPopularMovies } from "../api/tmdb.js";
+import { useAppContext } from "../context/AppContext.jsx";
+import { motion } from "framer-motion";
 
 const imageBaseUrl = "https://image.tmdb.org/t/p/w300";
 
@@ -8,6 +10,24 @@ const fetcher = () => fetchPopularMovies();
 
 function DiscoverPage() {
   const { data: movies, error, isLoading } = useSWR("popular-movies", fetcher);
+  const { state, addFavorite } = useAppContext();
+  const isLoggedIn = Boolean(state.user);
+
+  const handleAddFavorite = async (movie) => {
+    if (!state.user) return;
+
+    try {
+      await addFavorite({
+        userId: state.user.id,
+        tmdbId: movie.id,
+        title: movie.title,
+        posterPath: movie.poster_path,
+      });
+      alert(`"${movie.title}" added to favorites!`);
+    } catch (err) {
+      alert(err.message || "Failed to add favorite.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -51,7 +71,7 @@ function DiscoverPage() {
         }}
       >
         {movies.map((movie) => (
-          <div
+          <motion.div
             key={movie.id}
             style={{
               border: "1px solid #ddd",
@@ -59,6 +79,10 @@ function DiscoverPage() {
               padding: "0.5rem",
               overflow: "hidden",
             }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.3 }}
           >
             {movie.poster_path && (
               <img
@@ -78,7 +102,16 @@ function DiscoverPage() {
               ⭐ {movie.vote_average?.toFixed(1)} | 📅{" "}
               {movie.release_date || "N/A"}
             </p>
-          </div>
+
+            {isLoggedIn && (
+              <button
+                onClick={() => handleAddFavorite(movie)}
+                style={{ marginTop: "0.5rem" }}
+              >
+                Add to Favorites
+              </button>
+            )}
+          </motion.div>
         ))}
       </div>
     </div>
