@@ -1,64 +1,133 @@
 /* src/index.css */
 
-/* پایه‌ی ساده برای Vite + React */
-
-:root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color: #1f2933;
-  background-color: #f9fafb;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+/* Reset ساده */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: #e5e7eb;
+  background-color: #020617;
+}
+
+/* پس‌زمینه کلی صفحه */
 body {
   margin: 0;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 0% 0%, #1f2937, transparent 55%),
+    radial-gradient(circle at 100% 100%, #0f172a, #020617 55%);
+  color: inherit;
 }
 
+/* ریشه‌ی اپ */
+#root {
+  min-height: 100vh;
+}
+
+/* لینک‌ها */
 a {
-  font-weight: 500;
-  color: #2563eb;
+  color: #93c5fd;
   text-decoration: none;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
 a:hover {
+  color: #bfdbfe;
   text-decoration: underline;
+  text-decoration-color: rgba(191, 219, 254, 0.7);
 }
 
-#root {
-  max-width: 1200px;
+/* ناوبری (بدون تغییر ساختار فعلی) */
+nav {
+  backdrop-filter: blur(16px);
+  background: linear-gradient(
+    to right,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.75)
+  );
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+/* متن داخل nav که با span و Link ساخته شده */
+nav a {
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+nav a:hover {
+  background-color: rgba(148, 163, 184, 0.2);
+}
+
+/* تیترها و پاراگراف‌ها */
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: 1.7rem;
+  margin-bottom: 0.3rem;
+}
+
+p {
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+/* دکمه‌ها (همه‌ی buttonها) */
+button {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: #f97316;
+  color: #111827;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4);
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.12s ease, border-color 0.12s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.6);
+  background-color: #fb923c;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ظرف اصلی هر صفحه (div های ریشه‌ای در صفحات) */
+body > #root > div {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1.2rem 1.5rem 2.5rem;
 }
 
-/* انیمیشن ساده برای صفحات */
-
-.page {
-  animation: fade-in 0.4s ease-out;
+/* فاصله‌ی بین تیتر و محتوا */
+body > #root h1 + p {
+  margin-bottom: 0.75rem;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* کمی فاصله عمومی بین بخش‌ها */
+body > #root > div > div {
+  margin-bottom: 1rem;
 }
-
-/* می‌تونی بعداً استایل‌های بیشتری اینجا اضافه کنی */
