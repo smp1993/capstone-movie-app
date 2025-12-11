@@ -6,6 +6,8 @@ const path = require("path");
 
 const connectDB = require("./config/db");
 const favoriteRoutes = require("./routes/favoriteRoutes");
+const playlistRoutes = require("./routes/playlistRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -25,8 +27,10 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is running" });
 });
 
-// Favorite routes
+// API routes
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/playlists", playlistRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // (اختیاری) route برای تست ارور 500
 app.get("/api/force-error", (req, res, next) => {
@@ -44,7 +48,6 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("Unhandled server error:", err);
 
-  // اگر قبلاً headerها ارسال شده باشن، ارور رو به middleware بعدی پاس می‌دیم
   if (res.headersSent) {
     return next(err);
   }

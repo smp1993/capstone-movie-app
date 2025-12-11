@@ -1,52 +1,119 @@
-// src/api/backend.js
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// frontend/src/api/backend.js
+const BASE_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:5050";
 
-async function handleResponse(res) {
+async function handleJsonResponse(res) {
   if (!res.ok) {
     let message = `Request failed with status ${res.status}`;
     try {
       const data = await res.json();
-      if (data?.message) {
-        message = data.message;
-      }
-    } catch {
-      // ignore JSON parse error
+      if (data?.message) message = data.message;
+    } catch (e) {
+      // ignore json parse error
     }
     throw new Error(message);
   }
   return res.json();
 }
 
-// گرفتن لیست علاقه‌مندی‌ها برای یک userId
+/* ---------------- Favorites ---------------- */
+
 export async function fetchFavorites(userId) {
-  const res = await fetch(`${API_BASE_URL}/api/favorites/${userId}`);
-  return handleResponse(res);
+  const res = await fetch(`${BASE_URL}/api/favorites?userId=${userId}`);
+  return handleJsonResponse(res);
 }
 
-// اضافه کردن یک favorite جدید
 export async function createFavorite(payload) {
-  const res = await fetch(`${API_BASE_URL}/api/favorites`, {
+  const res = await fetch(`${BASE_URL}/api/favorites`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  return handleResponse(res);
+  return handleJsonResponse(res);
 }
 
-// آپدیت یک favorite (مثلاً note یا rating)
+export async function deleteFavorite(id) {
+  const res = await fetch(`${BASE_URL}/api/favorites/${id}`, {
+    method: "DELETE",
+  });
+  return handleJsonResponse(res);
+}
+
+// ✅ برای سازگاری با AppContext
+export async function deleteFavoriteById(id) {
+  return deleteFavorite(id);
+}
+
+// ✅ آپدیت favorite (مثلاً اگر بعداً بخوایم rating / note اضافه کنیم)
 export async function updateFavoriteById(id, payload) {
-  const res = await fetch(`${API_BASE_URL}/api/favorites/${id}`, {
+  const res = await fetch(`${BASE_URL}/api/favorites/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  return handleResponse(res);
+  return handleJsonResponse(res);
 }
 
-// حذف یک favorite
-export async function deleteFavoriteById(id) {
-  const res = await fetch(`${API_BASE_URL}/api/favorites/${id}`, {
+/* ---------------- Playlists ---------------- */
+
+export async function fetchPlaylists(userId) {
+  const res = await fetch(`${BASE_URL}/api/playlists?userId=${userId}`);
+  return handleJsonResponse(res);
+}
+
+export async function createPlaylist(payload) {
+  const res = await fetch(`${BASE_URL}/api/playlists`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleJsonResponse(res);
+}
+
+export async function updatePlaylist(id, payload) {
+  const res = await fetch(`${BASE_URL}/api/playlists/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleJsonResponse(res);
+}
+
+export async function deletePlaylist(id) {
+  const res = await fetch(`${BASE_URL}/api/playlists/${id}`, {
     method: "DELETE",
   });
-  return handleResponse(res);
+  return handleJsonResponse(res);
+}
+
+/* ---------------- Reviews ---------------- */
+
+export async function fetchReviews(userId) {
+  const res = await fetch(`${BASE_URL}/api/reviews?userId=${userId}`);
+  return handleJsonResponse(res);
+}
+
+export async function createReview(payload) {
+  const res = await fetch(`${BASE_URL}/api/reviews`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleJsonResponse(res);
+}
+
+export async function updateReview(id, payload) {
+  const res = await fetch(`${BASE_URL}/api/reviews/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleJsonResponse(res);
+}
+
+export async function deleteReview(id) {
+  const res = await fetch(`${BASE_URL}/api/reviews/${id}`, {
+    method: "DELETE",
+  });
+  return handleJsonResponse(res);
 }

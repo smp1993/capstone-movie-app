@@ -19,7 +19,7 @@ function App() {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       if (!credentialResponse.credential) {
-        console.error("No credential from Google");
+        console.warn("No credential from Google on this attempt");
         return;
       }
 
@@ -36,13 +36,15 @@ function App() {
       await loadFavoritesForUser(user.id);
     } catch (err) {
       console.error("Error decoding Google credential", err);
-      alert("Google login failed. Please try again.");
+      // این ارورها معمولاً موقتی هستن، لازم نیست alert به کاربر نشون بدیم
     }
   };
 
   const handleGoogleError = () => {
-    console.error("Google login error");
-    alert("Google login failed.");
+    // این ارورها معمولاً برای تلاش‌های خودکار گوگل هستن
+    console.warn(
+      "Google login error (non-fatal). Will try again on user click."
+    );
   };
 
   return (

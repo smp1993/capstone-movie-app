@@ -1,13 +1,25 @@
 // backend/routes/favoriteRoutes.js
 const express = require("express");
-const Favorite = require("../models/favoriteModel");
-
 const router = express.Router();
+const Favorite = require("../models/Favorite");
 
-// CREATE - اضافه کردن فیلم به علاقه‌مندی‌ها
+// GET /api/favorites?userId=...
+router.get("/", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const filter = userId ? { userId } : {};
+    const favorites = await Favorite.find(filter).sort({ createdAt: -1 });
+    res.json(favorites);
+  } catch (err) {
+    console.error("Error fetching favorites:", err);
+    res.status(500).json({ message: "Failed to fetch favorites" });
+  }
+});
+
+// POST /api/favorites  (idempotent)
 router.post("/", async (req, res) => {
   try {
-    const { userId, tmdbId, title, posterPath, note, rating } = req.body;
+    const { userId, tmdbId, title, posterPath } = req.body;
 
     if (!userId || !tmdbId || !title) {
       return res
@@ -15,11 +27,10 @@ router.post("/", async (req, res) => {
         .json({ message: "userId, tmdbId, and title are required" });
     }
 
+    // اگر قبلاً برای این user همین فیلم ذخیره شده، همونو برگردون
     const existing = await Favorite.findOne({ userId, tmdbId });
     if (existing) {
-      return res
-        .status(409)
-        .json({ message: "Movie already exists in favorites" });
+      return res.json(existing); // 200, بدون ارور
     }
 
     const favorite = await Favorite.create({
@@ -27,61 +38,24 @@ router.post("/", async (req, res) => {
       tmdbId,
       title,
       posterPath,
-      note,
-      rating,
     });
 
     res.status(201).json(favorite);
-  } catch (error) {
-    console.error("Error creating favorite:", error);
-    res.status(500).json({ message: "Server error creating favorite" });
+  } catch (err) {
+    console.error("Error creating favorite:", err);
+    res.status(500).json({ message: "Failed to create favorite" });
   }
 });
 
-// READ - گرفتن لیست علاقه‌مندی‌ها برای یک کاربر
-router.get("/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const favorites = await Favorite.find({ userId }).sort({ createdAt: -1 });
-    res.json(favorites);
-  } catch (error) {
-    console.error("Error fetching favorites:", error);
-    res.status(500).json({ message: "Server error fetching favorites" });
-  }
-});
-
-// UPDATE - آپدیت note و rating یک favorite
-router.put("/:id", async (req, res) => {
-  try {
-    const { note, rating } = req.body;
-
-    const favorite = await Favorite.findById(req.params.id);
-    if (!favorite) {
-      return res.status(404).json({ message: "Favorite not found" });
-    }
-
-    if (note !== undefined) favorite.note = note;
-    if (rating !== undefined) favorite.rating = rating;
-
-    await favorite.save();
-    res.json(favorite);
-  } catch (error) {
-    console.error("Error updating favorite:", error);
-    res.status(500).json({ message: "Server error updating favorite" });
-  }
-});
-
-// DELETE - حذف کردن یک favorite
+// DELETE /api/favorites/:id
 router.delete("/:id", async (req, res) => {
   try {
-    const favorite = await Favorite.findByIdAndDelete(req.params.id);
-    if (!favorite) {
-      return res.status(404).json({ message: "Favorite not found" });
-    }
+    const { id } = req.params;
+    await Favorite.findByIdAndDelete(id);
     res.json({ message: "Favorite deleted" });
-  } catch (error) {
-    console.error("Error deleting favorite:", error);
-    res.status(500).json({ message: "Server error deleting favorite" });
+  } catch (err) {
+    console.error("Error deleting favorite:", err);
+    res.status(500).json({ message: "Failed to delete favorite" });
   }
 });
 
