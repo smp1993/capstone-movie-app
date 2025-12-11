@@ -168,16 +168,16 @@ Create the following env files:
 #### `frontend/.env`
 
 ```env
-VITE_TMDB_API_KEY=YOUR_TMDB_API_KEY_HERE
+VITE_TMDB_API_KEY=fc9b5783e517d473a2db9d2938a749fd
 VITE_API_BASE_URL=http://localhost:5050
-VITE_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID_HERE
+VITE_GOOGLE_CLIENT_ID=922017013616-m1gr7p3cl72o0og3tkqr5p0m81g0ebm8.apps.googleusercontent.com
 ```
 
 #### `backend/.env`
 
 ```env
-MONGODB_URI=YOUR_MONGODB_CONNECTION_STRING
-NODE_ENV=development
+MONGODB_URI=mongodb+srv://movie:Nuttertools1993@cluster0.tix9qch.mongodb.net/?appName=Cluster0
+Port=5050
 ```
 
 > Real keys are kept locally. This repo includes `.env.example` files and uses `.gitignore` to avoid committing secrets.
