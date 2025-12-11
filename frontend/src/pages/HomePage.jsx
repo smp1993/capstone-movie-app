@@ -133,7 +133,7 @@ function HomePage() {
             >
               <p
                 style={{
-                  fontSize: "1.3rem", // 👈 شعار بزرگ‌تر
+                  fontSize: "clamp(1.3rem, 2.3vw, 2rem)", // 👈 شعار بزرگ‌تر
                   fontWeight: 600,
                   color: "#e5e7eb",
                   textShadow: "0 2px 8px rgba(0,0,0,0.7)",

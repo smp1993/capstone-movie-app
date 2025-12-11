@@ -119,3 +119,24 @@ body > #root h1 + p {
 body > #root > div > div {
   margin-bottom: 1rem;
 }
+
+.google-login-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at top left,
+    rgba(34, 197, 94, 0.35),
+    rgba(15, 23, 42, 1)
+  );
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+/* خود دکمه‌ی گوگل کمی کوچک‌تر تا قشنگ وسط پِل بشینه */
+.google-login-pill > div {
+  transform: scale(0.9);
+  transform-origin: center;
+}

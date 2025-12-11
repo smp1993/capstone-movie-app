@@ -25,12 +25,11 @@ function App() {
 
       const decoded = jwtDecode(credentialResponse.credential);
 
-      // این‌جا عکس گوگل رو هم ذخیره می‌کنیم
       const user = {
         id: decoded.sub,
         name: decoded.name,
         email: decoded.email,
-        picture: decoded.picture, // 👈 خیلی مهم برای Profile
+        picture: decoded.picture,
       };
 
       login(user);
@@ -64,7 +63,8 @@ function App() {
           zIndex: 10,
         }}
       >
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        {/* logo / title */}
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <span
             style={{
               fontWeight: 700,
@@ -87,6 +87,7 @@ function App() {
           />
         </div>
 
+        {/* nav links */}
         <div style={{ display: "flex", gap: "1rem" }}>
           <Link to="/" style={{ textDecoration: "none", color: "#e5e7eb" }}>
             Home
@@ -111,6 +112,7 @@ function App() {
           </Link>
         </div>
 
+        {/* auth area */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {isLoggedIn && (
             <span
@@ -126,13 +128,14 @@ function App() {
           {isLoggedIn ? (
             <button onClick={logout}>Logout</button>
           ) : (
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              // استفاده از حالت استاندارد
-              theme="outline"
-              size="medium"
-            />
+            <div className="google-login-pill">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="outline"
+                size="medium"
+              />
+            </div>
           )}
         </div>
       </nav>
