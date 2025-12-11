@@ -73,7 +73,7 @@ It demonstrates:
 ### Backend (Express + MongoDB)
 
 - **Deployment**:
-  - Cloud-hosted on Render: `https://YOUR_BACKEND_URL`
+  - Cloud-hosted on Render: `https://capstone-movie-backend.onrender.com`
 
 - **Health Check**:
   - `GET /api/health` → `{ status: "ok", message: "Backend is running" }`
