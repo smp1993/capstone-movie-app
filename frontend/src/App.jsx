@@ -6,6 +6,8 @@ import FavoritesPage from "./pages/FavoritesPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import { useAppContext } from "./context/AppContext.jsx";
+
+// Google OAuth
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
@@ -16,66 +18,120 @@ function App() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const { credential } = credentialResponse;
-      if (!credential) {
-        console.error("No credential returned from Google");
+      if (!credentialResponse.credential) {
+        console.error("No credential from Google");
         return;
       }
 
-      const decoded = jwtDecode(credential);
-      // decoded معمولاً شامل sub, name, email, picture و ... است
+      const decoded = jwtDecode(credentialResponse.credential);
+
+      // این‌جا عکس گوگل رو هم ذخیره می‌کنیم
       const user = {
         id: decoded.sub,
         name: decoded.name,
         email: decoded.email,
-        picture: decoded.picture,
+        picture: decoded.picture, // 👈 خیلی مهم برای Profile
       };
 
       login(user);
       await loadFavoritesForUser(user.id);
-    } catch (error) {
-      console.error("Error decoding Google credential:", error);
+    } catch (err) {
+      console.error("Error decoding Google credential", err);
+      alert("Google login failed. Please try again.");
     }
   };
 
   const handleGoogleError = () => {
-    console.error("Google Login failed");
-    alert("Google login failed. Please try again.");
+    console.error("Google login error");
+    alert("Google login failed.");
   };
 
   return (
-    <div className="page">
+    <div>
       {/* Navigation bar */}
       <nav
         style={{
-          padding: "1rem",
-          borderBottom: "1px solid #ddd",
+          padding: "1rem 1.5rem",
+          borderBottom: "1px solid #1f2937",
           marginBottom: "1rem",
           display: "flex",
           gap: "1rem",
           alignItems: "center",
           justifyContent: "space-between",
+          backgroundColor: "#020617",
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
         }}
       >
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <Link to="/">Home</Link>
-          <Link to="/discover">Discover</Link>
-          <Link to="/favorites">Favorites</Link>
-          <Link to="/profile">Profile</Link>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <span
+            style={{
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "#e5e7eb",
+            }}
+          >
+            Movie App
+          </span>
+          <span
+            style={{
+              width: "4px",
+              height: "4px",
+              borderRadius: "999px",
+              backgroundColor: "#22c55e",
+              boxShadow: "0 0 8px rgba(34,197,94,0.9)",
+            }}
+          />
         </div>
 
-        <div>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Link to="/" style={{ textDecoration: "none", color: "#e5e7eb" }}>
+            Home
+          </Link>
+          <Link
+            to="/discover"
+            style={{ textDecoration: "none", color: "#e5e7eb" }}
+          >
+            Discover
+          </Link>
+          <Link
+            to="/favorites"
+            style={{ textDecoration: "none", color: "#e5e7eb" }}
+          >
+            Favorites
+          </Link>
+          <Link
+            to="/profile"
+            style={{ textDecoration: "none", color: "#e5e7eb" }}
+          >
+            Profile
+          </Link>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {isLoggedIn && (
+            <span
+              style={{
+                fontSize: "0.9rem",
+                color: "#e5e7eb",
+              }}
+            >
+              Hi, {state.user.name}
+            </span>
+          )}
+
           {isLoggedIn ? (
-            <>
-              <span style={{ marginRight: "0.75rem" }}>
-                Hi, {state.user.name}
-              </span>
-              <button onClick={logout}>Logout</button>
-            </>
+            <button onClick={logout}>Logout</button>
           ) : (
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
+              // استفاده از حالت استاندارد
+              theme="outline"
+              size="medium"
             />
           )}
         </div>
