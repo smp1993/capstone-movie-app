@@ -1,162 +1,221 @@
 // src/pages/HomePage.jsx
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext.jsx";
+
+const slides = [
+  {
+    id: 1,
+    src: "/hero-zootopia.jpg",
+    alt: "Zootopia hero image",
+  },
+  {
+    id: 2,
+    src: "/hero-jurassic-world.jpg",
+    alt: "Jurassic World hero image",
+  },
+  {
+    id: 3,
+    src: "/hero-stranger-things.jpg",
+    alt: "Stranger Things hero image",
+  },
+];
 
 function HomePage() {
   const { state } = useAppContext();
   const isLoggedIn = Boolean(state.user);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // اسلایدر اتوماتیک با ترنزیشن جذاب‌تر (fade + move + scale)
+  useEffect(() => {
+    if (slides.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 6000); // هر ۶ ثانیه اسلاید عوض می‌شود
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div
-      style={{
-        padding: "1.5rem",
-        display: "grid",
-        gap: "1.5rem",
-      }}
-    >
-      {/* HERO SECTION */}
+    <div className="page-container">
+      {/* HERO SLIDER */}
       <section
         style={{
-          borderRadius: "18px",
-          padding: "1.6rem 1.8rem",
-          background:
-            "radial-gradient(circle at top left, rgba(56,189,248,0.2), transparent 55%), radial-gradient(circle at bottom right, rgba(249,115,22,0.2), rgba(15,23,42,0.95) 60%)",
-          border: "1px solid rgba(148,163,184,0.4)",
-          boxShadow: "0 22px 50px rgba(15,23,42,0.9)",
+          marginBottom: "2rem",
         }}
       >
-        {/* BANNER IMAGE */}
         <div
           style={{
-            borderRadius: "16px",
-            marginBottom: "1rem",
+            position: "relative",
+            borderRadius: "24px",
+            overflow: "hidden",
+            height: "520px", // 👈 ارتفاع بیشتر
             backgroundColor: "#020617",
+            boxShadow: "0 24px 60px rgba(15,23,42,0.95)",
           }}
         >
-          <img
-            src="/hero-zootopia.jpg" // فایلی که در frontend/public گذاشتی
-            alt="Movie characters banner"
-            style={{
-              width: "100%",
-              height: "auto",
-              objectFit: "contain",
-              display: "block",
-              borderRadius: "16px",
-            }}
-          />
-        </div>
-
-        {/* SMALL BADGE */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.45rem",
-            padding: "0.15rem 0.7rem",
-            borderRadius: "999px",
-            backgroundColor: "rgba(15,23,42,0.8)",
-            border: "1px solid rgba(148,163,184,0.5)",
-            fontSize: "0.75rem",
-            marginBottom: "0.9rem",
-          }}
-        >
-          <span
-            style={{
-              width: "7px",
-              height: "7px",
-              borderRadius: "999px",
-              background: "#22c55e",
-              boxShadow: "0 0 12px rgba(34,197,94,0.9)",
-            }}
-          />
-          <span>Capstone Movie App · React &amp; Express</span>
-        </div>
-
-        {/* TITLE & TEXT */}
-        <h1
-          style={{
-            fontSize: "2rem",
-            lineHeight: 1.25,
-            marginBottom: "0.5rem",
-          }}
-        >
-          Discover, track and save
-          <br />
-          your <span style={{ color: "#fb923c" }}>favorite movies</span>.
-        </h1>
-
-        <p
-          style={{
-            fontSize: "0.98rem",
-            color: "#9ca3af",
-            maxWidth: "32rem",
-            marginBottom: "1.2rem",
-          }}
-        >
-          Browse live data from TMDB, sign in with Google, and keep a personal
-          list of the movies you love — all powered by a full-stack React +
-          Express + MongoDB app.
-        </p>
-
-        {/* CTA BUTTONS */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "0.75rem",
-            alignItems: "center",
-          }}
-        >
-          <Link to="/discover" style={{ textDecoration: "none" }}>
-            <button
+          {slides.map((slide, index) => (
+            <div
+              key={slide.id}
               style={{
-                paddingInline: "1.3rem",
+                position: "absolute",
+                inset: 0,
+                opacity: index === currentIndex ? 1 : 0,
+                transform:
+                  index === currentIndex
+                    ? "scale(1) translateY(0)"
+                    : "scale(1.05) translateY(10px)",
+                transition:
+                  "opacity 0.9s ease-in-out, transform 0.9s ease-in-out",
+                pointerEvents: index === currentIndex ? "auto" : "none",
               }}
             >
-              🎬 Start discovering
-            </button>
-          </Link>
+              {/* تصویر پس‌زمینه */}
+              <img
+                src={slide.src}
+                alt={slide.alt}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  filter: "brightness(0.75)",
+                }}
+              />
 
-          {isLoggedIn ? (
-            <Link to="/favorites" style={{ textDecoration: "none" }}>
+              {/* گرادیان نرم برای خواناتر شدن دکمه‌ها */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(90deg, rgba(15,23,42,0.75), rgba(15,23,42,0.15), rgba(15,23,42,0.85))",
+                }}
+              />
+            </div>
+          ))}
+
+          {/* دکمه‌ها روی اسلاید – یکی وسط چپ، یکی وسط راست + شعار وسط */}
+          <div
+            style={{
+              position: "absolute",
+              left: "2rem",
+              right: "2rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              pointerEvents: "none", // خود دکمه‌ها pointerEvents: auto دارند
+              gap: "1rem",
+            }}
+          >
+            <Link
+              to="/discover"
+              style={{ textDecoration: "none", pointerEvents: "auto" }}
+            >
+              <button
+                style={{
+                  paddingInline: "1.4rem",
+                }}
+              >
+                🎬 Start discovering
+              </button>
+            </Link>
+
+            {/* شعار وسط بین دو دکمه */}
+            <div
+              style={{
+                pointerEvents: "none",
+                textAlign: "center",
+                flex: "0 1 40%",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "1.3rem", // 👈 شعار بزرگ‌تر
+                  fontWeight: 600,
+                  color: "#e5e7eb",
+                  textShadow: "0 2px 8px rgba(0,0,0,0.7)",
+                  margin: 0,
+                  lineHeight: 1.3,
+                }}
+              >
+                Track the movies you love, all in one place.
+              </p>
+            </div>
+
+            <Link
+              to="/favorites"
+              style={{ textDecoration: "none", pointerEvents: "auto" }}
+            >
               <button
                 style={{
                   background: "transparent",
                   color: "#e5e7eb",
-                  borderColor: "rgba(148,163,184,0.6)",
+                  borderColor: "rgba(148,163,184,0.8)",
                   boxShadow: "none",
                 }}
               >
-                ⭐ View my favorites
+                ⭐ View favorites
+                {isLoggedIn && state.favorites?.length
+                  ? ` (${state.favorites.length})`
+                  : ""}
               </button>
             </Link>
-          ) : (
-            <p
-              style={{
-                fontSize: "0.85rem",
-                color: "#9ca3af",
-              }}
-            >
-              Tip: log in with Google from the top bar to start saving movies.
-            </p>
-          )}
+          </div>
+
+          {/* دایره‌های اسلایدر – پایین وسط */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "1.1rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "0.4rem",
+            }}
+          >
+            {slides.map((slide, index) => (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => setCurrentIndex(index)}
+                style={{
+                  width: index === currentIndex ? "12px" : "8px",
+                  height: "8px",
+                  borderRadius: "999px",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  backgroundColor:
+                    index === currentIndex
+                      ? "rgba(248,250,252,0.98)"
+                      : "rgba(148,163,184,0.8)",
+                  opacity: index === currentIndex ? 1 : 0.8,
+                  transition: "all 0.2s ease-out",
+                }}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
+      {/* بخش پایینی: توضیح کوتاه درباره اپ */}
       <section
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "1rem",
+          gap: "1.2rem",
         }}
       >
         <div
           style={{
-            borderRadius: "14px",
+            borderRadius: "16px",
             padding: "1rem",
-            backgroundColor: "rgba(15,23,42,0.95)",
-            border: "1px solid rgba(148,163,184,0.35)",
+            border: "1px solid rgba(148,163,184,0.4)",
+            background:
+              "radial-gradient(circle at top left, rgba(59,130,246,0.18), rgba(15,23,42,0.96))",
           }}
         >
           <h2
@@ -165,20 +224,26 @@ function HomePage() {
               marginBottom: "0.35rem",
             }}
           >
-            📡 Live data from TMDB
+            🔗 Full-stack integration
           </h2>
-          <p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
-            The Discover page pulls popular movies directly from the TMDB API,
-            with proper loading and error handling states.
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#e5e7eb",
+            }}
+          >
+            React frontend, Express backend and MongoDB database work together
+            to store and load your favorites.
           </p>
         </div>
 
         <div
           style={{
-            borderRadius: "14px",
+            borderRadius: "16px",
             padding: "1rem",
-            backgroundColor: "rgba(15,23,42,0.95)",
-            border: "1px solid rgba(148,163,184,0.35)",
+            border: "1px solid rgba(148,163,184,0.4)",
+            background:
+              "radial-gradient(circle at top right, rgba(34,197,94,0.14), rgba(15,23,42,0.96))",
           }}
         >
           <h2
@@ -187,20 +252,26 @@ function HomePage() {
               marginBottom: "0.35rem",
             }}
           >
-            🔐 Google login &amp; personal favorites
+            🧠 Smart frontend
           </h2>
-          <p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
-            Sign in with Google, and your favorites are linked to your account
-            in MongoDB through a secure Express API.
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#e5e7eb",
+            }}
+          >
+            Google OAuth, global state with Context + useReducer, and SWR
+            for fetching TMDB data.
           </p>
         </div>
 
         <div
           style={{
-            borderRadius: "14px",
+            borderRadius: "16px",
             padding: "1rem",
-            backgroundColor: "rgba(15,23,42,0.95)",
-            border: "1px solid rgba(148,163,184,0.35)",
+            border: "1px solid rgba(148,163,184,0.4)",
+            background:
+              "radial-gradient(circle at bottom, rgba(251,146,60,0.18), rgba(15,23,42,0.96))",
           }}
         >
           <h2
@@ -209,11 +280,16 @@ function HomePage() {
               marginBottom: "0.35rem",
             }}
           >
-            🧪 Tested &amp; documented
+            🧪 Tested & deployed
           </h2>
-          <p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
-            The project includes a Dev Container, Playwright end-to-end tests,
-            a design sequence diagram, and full deployment documentation.
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#e5e7eb",
+            }}
+          >
+            End-to-end tests with Playwright, backend on Render, frontend on
+            Netlify, and documented Dev Container.
           </p>
         </div>
       </section>
