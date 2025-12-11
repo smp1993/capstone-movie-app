@@ -23,7 +23,10 @@ It demonstrates:
   👉 `TODO: https://capstone-movie-app.netlify.app`  
 
 - **Backend (Express, Render)**:  
-  👉 `TODO: https://capstone-movie-backend.onrender.com`  
+  👉 `TODO: https://capstone-movie-backend.onrender.com`
+
+- **Backend health**:  
+  👉 `TODO: https://capstone-movie-backend.onrender.com/api/health`
 
 - **Video demonstration (3–5 minutes)**:  
   👉 `TODO: add video link (YouTube / unlisted / Google Drive)`
