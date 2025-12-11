@@ -152,8 +152,13 @@ function DiscoverPage() {
                   style={{
                     marginTop: "0.55rem",
                     width: "100%",
-                    opacity: isFavorite ? 0.7 : 1,
+                    opacity: isFavorite ? 0.9 : 1,
                     cursor: isFavorite ? "default" : "pointer",
+                    backgroundColor: isFavorite ? "#4ade80" : undefined,
+                    color: isFavorite ? "#ffffff" : undefined,
+                    border: isFavorite
+                      ? "1px solid #86efac"
+                      : undefined,
                   }}
                 >
                   {isFavorite ? "Added to Favorites" : "Add to Favorites"}
