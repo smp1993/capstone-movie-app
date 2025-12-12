@@ -120,19 +120,15 @@ body > #root > div > div {
   margin-bottom: 1rem;
 }
 
+/* دکمه گوگل داخل ناوبار */
 .google-login-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;                /* کادر خیلی نازک دور دکمه */
-  border-radius: 999px;
-  background: radial-gradient(circle at top, #111827, #020617);
-  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4);
-  overflow: hidden;            /* اجازه نمی‌ده دکمه از کادر بزنه بیرون */
 }
 
-/* خود iframe / div داخلی گوگل را کمی کوچک‌تر می‌کنیم */
+/* خود container داخلی گوگل (معمولاً یک div) */
 .google-login-pill > div {
-  transform: scale(0.9);
-  transform-origin: center right;
+  border-radius: 999px !important;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4);
 }
