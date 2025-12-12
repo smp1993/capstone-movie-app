@@ -120,20 +120,21 @@ body > #root > div > div {
   margin-bottom: 1rem;
 }
 
-/* کادر بیضی دور دکمه گوگل */
 .google-login-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  /* این میشه همون کادر بیضی تیره */
-  padding: 2px 4px;                 /* کادر رو کمی بزرگ‌تر از خود دکمه می‌کنه */
+  position: relative;
+  display: inline-block;
+  padding: 0;                 /* سایز رو خود دکمه تعیین می‌کند */
   border-radius: 999px;
-  background-color: #020617;        /* رنگ پس‌زمینه ناوبار */
-  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+  overflow: visible !important;
 }
 
-/* خود container داخلی گوگل */
-.google-login-pill > div {
-  border-radius: 999px !important;  /* دکمه‌ی گوگل هم کاملاً گرد بشه */
+/* بیضی که دور دکمه کشیده می‌شود */
+.google-login-pill::before {
+  content: "";
+  position: absolute;
+  inset: -4px;                /* چقدر از دور دکمه فاصله داشته باشه */
+  border-radius: 999px;
+  background-color: #020617;  /* رنگ پس‌زمینه ناوبار */
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.5);
+  z-index: -1;                /* پشت دکمه قرار بگیرد */
 }
