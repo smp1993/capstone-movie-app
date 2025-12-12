@@ -324,13 +324,14 @@ function DiscoverPage() {
                         border: "none",
                         fontSize: "0.9rem",
                         fontWeight: 500,
-                        backgroundColor: isFavorite ? "#16a34a" : "#22c55e",
+                        // 🟣 وقتی favorite شد، بنفش می‌شود
+                        backgroundColor: isFavorite ? "#8b5cf6" : "#22c55e",
                         color: "#f9fafb",
                         boxShadow: isFavorite
-                          ? "0 0 0 1px rgba(22,163,74,0.6)"
+                          ? "0 0 0 1px rgba(139,92,246,0.7)"
                           : "0 0 0 1px rgba(34,197,94,0.5)",
                         cursor: isFavorite ? "default" : "pointer",
-                        opacity: isFavorite ? 0.9 : 1,
+                        opacity: isFavorite ? 0.95 : 1,
                         transition:
                           "background-color 0.15s ease, transform 0.1s ease",
                       }}
