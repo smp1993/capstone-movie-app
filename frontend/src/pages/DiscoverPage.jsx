@@ -46,6 +46,7 @@ function DiscoverPage() {
       return;
     }
 
+    // اگر همین حالا توی state.favorites هست، اصلاً درخواست هم نزن
     const alreadyFav = state.favorites?.some(
       (fav) => fav.tmdbId === movie.id
     );
@@ -59,6 +60,13 @@ function DiscoverPage() {
         posterPath: movie.poster_path,
       });
     } catch (err) {
+      // اگر بک‌اند بگه این فیلم از قبل توی favorites هست، فقط ساکت رد شو
+      if (err.message === "Movie already exists in favorites") {
+        console.warn("Duplicate favorite ignored");
+        return;
+      }
+
+      // بقیه خطاها واقعی هستن و باید به کاربر گفته بشن
       alert(err.message || "Failed to add favorite.");
     }
   };
