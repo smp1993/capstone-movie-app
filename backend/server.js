@@ -5,6 +5,8 @@ require("dotenv").config();
 const path = require("path");
 
 const connectDB = require("./config/db");
+
+// مدل‌ها و روترها
 const favoriteRoutes = require("./routes/favoriteRoutes");
 const playlistRoutes = require("./routes/playlistRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
@@ -12,14 +14,22 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const app = express();
 const PORT = process.env.PORT || 5050;
 
-// اتصال به دیتابیس
+// اتصال به MongoDB
 connectDB();
 
 // Middleware عمومی
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://capstone-movie-app.netlify.app",
+    ],
+    credentials: false,
+  })
+);
 app.use(express.json());
 
-// سرو فایل‌های استاتیک از پوشه public
+// سرو فایل‌های استاتیک (در صورت نیاز)
 app.use(express.static(path.join(__dirname, "public")));
 
 // Health check
@@ -27,24 +37,22 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is running" });
 });
 
-// API routes
+// ====== API Routes ======
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/playlists", playlistRoutes);
 app.use("/api/reviews", reviewRoutes);
 
-// (اختیاری) route برای تست ارور 500
+// تست خطای 500 (اختیاری)
 app.get("/api/force-error", (req, res, next) => {
   next(new Error("Forced test error"));
 });
 
-// 404 - Not Found (برای routeهایی که هیچ‌جا match نشدن)
+// 404 - Not Found
 app.use((req, res) => {
-  res
-    .status(404)
-    .sendFile(path.join(__dirname, "public", "errors", "404.html"));
+  res.status(404).json({ message: "Route not found" });
 });
 
-// 500 - Server Error (برای خطاهای غیرمنتظره)
+// 500 - Server Error
 app.use((err, req, res, next) => {
   console.error("Unhandled server error:", err);
 
@@ -52,9 +60,7 @@ app.use((err, req, res, next) => {
     return next(err);
   }
 
-  res
-    .status(500)
-    .sendFile(path.join(__dirname, "public", "errors", "500.html"));
+  res.status(500).json({ message: "Internal server error" });
 });
 
 app.listen(PORT, () => {
